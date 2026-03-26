@@ -1,0 +1,10 @@
+name = "staged-mrsc-lean4"
+version = "0.1.0"
+defaultTargets = ["staged-mrsc-lean4"]
+
+[[lean_lib]]
+name = "StagedMrscLean4"
+
+[[lean_exe]]
+name = "staged-mrsc-lean4"
+root = "Main"
