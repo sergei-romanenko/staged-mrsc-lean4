@@ -1,4 +1,4 @@
-import StagedMrscLean4
+import SMRSC
 
 def main : IO Unit :=
   IO.println s!"Hello, {hello}!"

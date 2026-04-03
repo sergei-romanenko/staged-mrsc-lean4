@@ -2,8 +2,18 @@ name = "staged-mrsc-lean4"
 version = "0.1.0"
 defaultTargets = ["staged-mrsc-lean4"]
 
+[[require]]
+name = "batteries"
+scope = "leanprover-community"
+rev = "v4.28.0"
+
+[[require]]
+name = "aesop"
+scope = "leanprover-community"
+rev = "v4.28.0"
+
 [[lean_lib]]
-name = "StagedMrscLean4"
+name = "SMRSC"
 
 [[lean_exe]]
 name = "staged-mrsc-lean4"
