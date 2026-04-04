@@ -3,3 +3,4 @@
 import SMRSC.Basic
 
 import SMRSC.AbstractSc
+import SMRSC.AlmostFullRel

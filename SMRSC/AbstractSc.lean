@@ -36,21 +36,21 @@ class ScWorld where
 
   conf : Node -> Configuration
 
-  Foldable : (g : Graph) -> (b a : Node) -> Prop
-  foldable : (g : Graph) -> (b : Node) -> Option Node
-  fold : (g : Graph) -> (b a : Node) -> Graph
+  Foldable : (g : Graph) -> (β α : Node) -> Prop
+  foldable : (g : Graph) -> (β : Node) -> Option Node
+  fold : (g : Graph) -> (β α : Node) -> Graph
 
   driveStep : Configuration -> DriveInfo
-  addChildren : (g : Graph) -> (b : Node) -> (cs : DriveInfo) -> Graph
+  addChildren : (g : Graph) -> (β : Node) -> (cs : DriveInfo) -> Graph
 
   rebuilding : (c : Configuration) -> Configuration
   InRebuildings : (c' c : Configuration) -> Prop
-  rebuild : (g : Graph) -> (b : Node) -> (c' : Configuration) -> Graph
+  rebuild : (g : Graph) -> (β : Node) -> (c' : Configuration) -> Graph
 
-  dangerous : (g : Graph) -> (b : Node) -> Bool
+  dangerous : (g : Graph) -> (β : Node) -> Bool
 
-  foldable_correct {g a b} :
-    foldable g b = some a -> Foldable g b a
+  foldable_correct {g α β} :
+    foldable g β = some α -> Foldable g β α
   rebuilding_correct {c c'} :
     rebuilding c = c' -> InRebuildings c' c
 
@@ -83,19 +83,19 @@ open ScWorld
 -/
 
 inductive SC [ScWorld] : (g g' : Graph) -> Prop where
-  | fold {g a b} :
-      (f : foldable g b = some a) ->
-        SC g (fold g b a)
-  | drive {g b cs} :
-      (not_f : foldable g b = none) ->
-      (not_w : dangerous g b = false) ->
-      (d : driveStep (conf b) = cs) ->
-        SC g (addChildren g b cs)
-  | rebuild {g b c c'} :
-      (not_f : foldable g b = none) ->
-      (w : dangerous g b = true) ->
+  | fold {g α β} :
+      (f : foldable g β = some α) ->
+        SC g (fold g β α)
+  | drive {g β cs} :
+      (not_f : foldable g β = none) ->
+      (not_w : dangerous g β = false) ->
+      (d : driveStep (conf β) = cs) ->
+        SC g (addChildren g β cs)
+  | rebuild {g β c c'} :
+      (not_f : foldable g β = none) ->
+      (w : dangerous g β = true) ->
       (r : rebuilding c = c') ->
-        SC g (rebuild g b c')
+        SC g (rebuild g β c')
 
 /-
 ### (b) NDSC: Non-deterministic supercompilation (transformation relation) ###
@@ -123,17 +123,17 @@ inductive SC [ScWorld] : (g g' : Graph) -> Prop where
 -/
 
 inductive NDSC [ScWorld] : (g g' : Graph) -> Prop where
-  | fold {g b a} :
-      (f : foldable g b = some a) ->
-        NDSC g (fold g b a)
-  | drive {g b cs} :
-      (not_f : foldable g b = none) ->
-      (d : driveStep (conf b) = cs) ->
-        NDSC g (addChildren g b cs)
-  | rebuild {g b c c'} :
-      (not_f : foldable g b = none) ->
+  | fold {g β α} :
+      (f : foldable g β = some α) ->
+        NDSC g (fold g β α)
+  | drive {g β cs} :
+      (not_f : foldable g β = none) ->
+      (d : driveStep (conf β) = cs) ->
+        NDSC g (addChildren g β cs)
+  | rebuild {g β c c'} :
+      (not_f : foldable g β = none) ->
       (rs : InRebuildings c' c) ->
-        NDSC g (rebuild g b c')
+        NDSC g (rebuild g β c')
 
 /-
 ### (c) MRSC: Multi-result supercompilation ###
@@ -162,18 +162,18 @@ inductive NDSC [ScWorld] : (g g' : Graph) -> Prop where
 -/
 
 inductive MRSC [ScWorld] : (g g' : Graph) -> Prop where
-  | fold {g b a} :
-      (f : foldable g b = some a) ->
-        MRSC g (fold g b a)
-  | drive {g b cs} :
-      (not_f : foldable g b = none) ->
-      (not_w : dangerous g b = false) ->
-      (d : driveStep (conf b) = cs) ->
-        MRSC g (addChildren g b cs)
-  | rebuild {g b c c'} :
-      (not_f : foldable g b = none) ->
+  | fold {g β α} :
+      (f : foldable g β = some α) ->
+        MRSC g (fold g β α)
+  | drive {g β cs} :
+      (not_f : foldable g β = none) ->
+      (not_w : dangerous g β = false) ->
+      (d : driveStep (conf β) = cs) ->
+        MRSC g (addChildren g β cs)
+  | rebuild {g β c c'} :
+      (not_f : foldable g β = none) ->
       (rs : InRebuildings c' c) ->
-        MRSC g (rebuild g b c')
+        MRSC g (rebuild g β c')
 
 
 -- Now let us prove some "natural" theorems.
@@ -209,14 +209,14 @@ theorem SC_NDSC [ScWorld] {g g'} : SC g g' -> NDSC g g'
 
 -- Transitive closures
 
-inductive Star {a} (r : a -> a -> Prop) : a -> a -> Prop where
+inductive Star {α} (r : α -> α -> Prop) : α -> α -> Prop where
   | nil {x} : Star r x x
   | cons {x y z} : r x y -> Star r y z -> Star r x z
 
 notation " [] " => Star.nil
 infixr:67 " :: " => Star.cons
 
-def Star.append {a} {x y z : a} {r} : Star r x y -> Star r y z -> Star r x z := fun
+def Star.append {α} {x y z : α} {r} : Star r x y -> Star r y z -> Star r x z := fun
   | .nil, s2 => s2
   | .cons h s1, s2 => h :: (.append s1 s2)
 
