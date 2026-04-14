@@ -32,7 +32,7 @@ def af_mono {α p q} (pq : {x y : α} -> p x y -> q x y) :
 
 inductive WFT : (α  :  Type) -> Type where
   | now {α}   : WFT α
-  | later {α} : (s : α -> WFT α) -> WFT α
+  | later {α} : (l : α -> WFT α) -> WFT α
 
 --
 -- The tree can be separated from the relation.
@@ -44,8 +44,8 @@ inductive WFT : (α  :  Type) -> Type where
 
 def SecureBy {α} (r : α -> α -> Prop) : (t :  WFT α) -> Prop := fun
   | .now => ∀ x y, r x y
-  | .later s =>
-      ∀ u, SecureBy (fun x y => r x y ∨ r u x) (s u)
+  | .later l =>
+      ∀ u, SecureBy (fun x y => r x y ∨ r u x) (l u)
 
 -- AlmostFullT
 
@@ -102,13 +102,13 @@ def af_to_sb {α : Type} {r : α -> α -> Prop} :
 -- sb_mono
 
 def sb_mono {α : Type} {p q : α -> α -> Prop}
-  (t : WFT α) (sp : SecureBy p t) (pq: ∀ x y, p x y → q x y) :
+  (t : WFT α) (s : SecureBy p t) (pq: ∀ x y, p x y → q x y) :
       SecureBy q t :=
   match t with
-  | .now => fun x y => pq x y (sp x y)
-  | .later s =>
+  | .now => fun x y => pq x y (s x y)
+  | .later l =>
       fun u =>
-      show SecureBy (fun x y => q x y ∨ q u x) (s u) from
-      sb_mono (s u) (sp u) (fun x y =>
+      show SecureBy (fun x y => q x y ∨ q u x) (l u) from
+      sb_mono (l u) (s u) (fun x y =>
         show p x y ∨ p u x → q x y ∨ q u x from
         (Or.elim · (Or.inl ∘ pq x y) (Or.inr ∘ pq u x)))

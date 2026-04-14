@@ -36,7 +36,6 @@ class ScWorld where
 
   conf : Node -> Configuration
 
-  Foldable : (g : Graph) -> (β α : Node) -> Prop
   foldable : (g : Graph) -> (β : Node) -> Option Node
   fold : (g : Graph) -> (β α : Node) -> Graph
 
@@ -49,8 +48,6 @@ class ScWorld where
 
   dangerous : (g : Graph) -> (β : Node) -> Bool
 
-  foldable_correct {g α β} :
-    foldable g β = some α -> Foldable g β α
   rebuilding_correct {c c'} :
     rebuilding c = c' -> InRebuildings c' c
 
@@ -216,9 +213,9 @@ inductive Star {α} (r : α -> α -> Prop) : α -> α -> Prop where
 notation " [] " => Star.nil
 infixr:67 " :: " => Star.cons
 
-def Star.append {α} {x y z : α} {r} : Star r x y -> Star r y z -> Star r x z := fun
+def Star.append {α} {x y z : α} {r} : Star r x y -> Star r y z -> Star r x z
   | .nil, s2 => s2
-  | .cons h s1, s2 => h :: (.append s1 s2)
+  | .cons h s1, s2 => h :: s1.append s2
 
 infixl:65 " ++ "  => Star.append
 
