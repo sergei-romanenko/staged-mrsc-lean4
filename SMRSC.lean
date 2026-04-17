@@ -6,3 +6,9 @@ import SMRSC.Util
 import SMRSC.AbstractSc
 import SMRSC.AlmostFullRel
 import SMRSC.BarWhistles
+import SMRSC.Graphs
+
+-- Tests
+
+import SMRSC.Test.Cartesian
+import SMRSC.Test.Graphs

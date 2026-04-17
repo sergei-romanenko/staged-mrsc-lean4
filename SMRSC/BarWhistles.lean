@@ -147,7 +147,7 @@ instance pathLengthWhistle (α : Type) (l : Nat) : BarWhistle α :=
   ⟨dangerous, monoDangerous, dangerous?, barNil⟩
 
 --
--- WFT, SecBy, BarT
+-- WFT, SecureHBy, BarT
 --
 
 /-
@@ -156,20 +156,20 @@ inductive WFT : (α  :  Type) -> Type where
   | later {α} : (s : α -> WFT α) -> WFT α
  -/
 
-def SecBy {α} (d : List α -> Prop) : (h : List α) -> (t :  WFT α) -> Prop
+def SecureHBy {α} (d : List α -> Prop) : (h : List α) -> (t :  WFT α) -> Prop
   | h, .now => d h
   | h, .later s =>
-      ∀ c, SecBy d (c :: h) (s c)
+      ∀ c, SecureHBy d (c :: h) (s c)
 
 def BarT {α : Type} (d : List α -> Prop) (h : List α) :=
-  {t // SecBy d h t}
+  {t // SecureHBy d h t}
 
 --
 -- Bar d h <--> BarT d h
 --
 
 def bart_to_bar' {α} (d : List α -> Prop) (h : List α) :
-      (t : WFT α) -> (s : SecBy d h t) -> Bar d h
+      (t : WFT α) -> (s : SecureHBy d h t) -> Bar d h
   | .now, s => .now s
   | .later l, s => .later fun c => bart_to_bar' d (c :: h) (l c) (s c)
 
@@ -223,7 +223,7 @@ namespace BarGenT
 variable {α : Type} [w : BarWhistleT α] (step : List α -> α)
 open BarWhistleT
 
-def barGenT' (h : List α) : (t : WFT α) -> (s : SecBy dangerous h t)  ->
+def barGenT' (h : List α) : (t : WFT α) -> (s : SecureHBy dangerous h t)  ->
       {h' : List α // dangerous h'}
   | .now, dh => ⟨h, dh⟩
   | .later l, s =>
@@ -249,7 +249,7 @@ instance inverseImageWhistleT {α β : Type} (f : α -> β)
   let monoDangerous := fun c h => w.monoDangerous (f c) (List.map f h)
   let dangerous? := fun h => w.dangerous? (List.map f h)
 
-  let rec bar : (h : List α) -> (t : WFT β) -> (s : SecBy w.dangerous (List.map f h) t) ->
+  let rec bar : (h : List α) -> (t : WFT β) -> (s : SecureHBy w.dangerous (List.map f h) t) ->
             BarT dangerous h :=
         fun h => fun
           | .now, dh => ⟨.now, dh⟩
@@ -377,12 +377,12 @@ def dangerous : (h : List α) -> Prop
 
 variable (covers? : DecidableRel covers)
 
-def hist_covers? : (h : List α) -> (c : α) -> Decidable (h_covers covers h c)
+def h_covers? : (h : List α) -> (c : α) -> Decidable (h_covers covers h c)
   | [], _ => isFalse id
   | c' :: h, c =>
       match covers? c' c with
       | isFalse ncc'c =>
-          match hist_covers? h c with
+          match h_covers? h c with
           | isFalse nhc => isFalse (Or.elim · ncc'c nhc)
           | isTrue hc => isTrue (.inr hc)
       | isTrue cc'c => isTrue (.inl cc'c)
@@ -390,7 +390,7 @@ def hist_covers? : (h : List α) -> (c : α) -> Decidable (h_covers covers h c)
 def dangerous? : (h : List α) -> Decidable (dangerous covers h)
   | [] => isFalse id
   | c :: h =>
-      match hist_covers? covers covers? h c with
+      match h_covers? covers covers? h c with
       | isFalse nhc =>
           match dangerous? h with
           | isFalse nhdh => isFalse (Or.elim · nhc nhdh)
