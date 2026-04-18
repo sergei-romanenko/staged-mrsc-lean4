@@ -38,7 +38,6 @@ class BarWhistle α where
 
   -- Dangerous histories
   dangerous {α} : (h : List α) -> Prop
-  monoDangerous {α} : (c : α) -> (h : List α) -> dangerous h -> dangerous (c :: h)
   dangerous? : (h : List α) -> Decidable (dangerous h)
 
   -- Bar-induction
@@ -121,8 +120,6 @@ def bar_or {α} {d d' : List α -> Prop} (h : List α)
 instance pathLengthWhistle (α : Type) (l : Nat) : BarWhistle α :=
   let dangerous (h : List α) : Prop
     := l ≤  h.length
-  let monoDangerous (c : α) (h : List α) (dh : dangerous h) : dangerous (c :: h)
-    := Nat.le_add_right_of_le dh
   let dangerous? (h : List α) : Decidable (dangerous h)
     := l.decLe h.length
 
@@ -144,7 +141,7 @@ instance pathLengthWhistle (α : Type) (l : Nat) : BarWhistle α :=
   let barNil : Bar dangerous []
     := bar l [] (Nat.add_eq_left.mpr rfl)
 
-  ⟨dangerous, monoDangerous, dangerous?, barNil⟩
+  ⟨dangerous, dangerous?, barNil⟩
 
 --
 -- WFT, SecureHBy, BarT
@@ -192,7 +189,6 @@ class BarWhistleT α where
 
   -- Dangerous histories
   dangerous {α} : (h : List α) -> Prop
-  monoDangerous {α} : (c : α) -> (h : List α) -> dangerous h -> dangerous (c :: h)
   dangerous? : (h : List α) -> Decidable (dangerous h)
 
   -- Bar-induction
@@ -205,11 +201,11 @@ class BarWhistleT α where
 --
 
 def bw_to_bwt {α} (w : BarWhistle α) : BarWhistleT α
-  := ⟨w.dangerous, w.monoDangerous, w.dangerous?,
+  := ⟨w.dangerous, w.dangerous?,
       bar_to_bart w.dangerous [] w.barNil⟩
 
 def bwt_to_bw {α} (w : BarWhistleT α) : BarWhistle α
-  := ⟨w.dangerous, w.monoDangerous, w.dangerous?,
+  := ⟨w.dangerous, w.dangerous?,
       bart_to_bar w.dangerous [] w.barNil⟩
 
 
@@ -246,7 +242,6 @@ instance inverseImageWhistleT {α β : Type} (f : α -> β)
   :=
 
   let dangerous := w.dangerous ∘ List.map f
-  let monoDangerous := fun c h => w.monoDangerous (f c) (List.map f h)
   let dangerous? := fun h => w.dangerous? (List.map f h)
 
   let rec bar : (h : List α) -> (t : WFT β) -> (s : SecureHBy w.dangerous (List.map f h) t) ->
@@ -259,7 +254,7 @@ instance inverseImageWhistleT {α β : Type} (f : α -> β)
 
   let barNil : BarT dangerous [] := bar [] w.barNil.val w.barNil.property
 
-  ⟨ dangerous, monoDangerous, dangerous?, barNil ⟩
+  ⟨ dangerous, dangerous?, barNil ⟩
 
 -- inverseImageWhistle
 
@@ -293,11 +288,6 @@ def dangerous : (h : List α) -> Prop
   | (_ :: []) => False
   | (c' :: c :: h) => (¬ r c' c) ∨ (dangerous (c :: h))
 
-def monoDangerous (c : α) :
-      (h : List α) -> dangerous r h -> dangerous r (c :: h)
-  | [], dh => dh
-  | (_ :: _), dh => Or.inr dh
-
 variable [DecidableRel r]
 
 def dangerous? : (h : List α) -> Decidable (dangerous r h)
@@ -311,7 +301,6 @@ def dangerous? : (h : List α) -> Decidable (dangerous r h)
           else
             isTrue (.inl h)
       | isTrue dch => isTrue (.inr dch)
-
 
 def bar (c : α) (h : List α) :
       AccT r c -> Bar (dangerous r) (c :: h)
@@ -349,13 +338,11 @@ end WFWhistle
 
 instance wfWhistle {α : Type} (r : α -> α -> Prop) (dr : DecidableRel r)
                     (wf : WellFoundedT r) : BarWhistle α
-  := ⟨ WFWhistle.dangerous r, WFWhistle.monoDangerous r,
-        WFWhistle.dangerous? r, WFWhistle.barNil r wf ⟩
+  := ⟨ WFWhistle.dangerous r, WFWhistle.dangerous? r, WFWhistle.barNil r wf ⟩
 
 instance wfWhistleT {α : Type} (r : α -> α -> Prop) (dr : DecidableRel r)
                     (wf : WellFoundedT r) : BarWhistleT α
-  := ⟨ WFWhistle.dangerous r, WFWhistle.monoDangerous r,
-        WFWhistle.dangerous? r, WFWhistle.barNilT r wf ⟩
+  := ⟨ WFWhistle.dangerous r, WFWhistle.dangerous? r, WFWhistle.barNilT r wf ⟩
 
 --
 -- Whistles based on the idea that some elements of the sequence
@@ -405,7 +392,7 @@ instance CWhistle {α : Type} (covers : α -> α -> Prop) (covers? : DecidableRe
           (c_barNil : Bar (CWhistle.dangerous covers) [])
       : BarWhistle α
   := ⟨ CWhistle.dangerous covers,
-        fun _ _ => .inr,
+        -- fun _ _ => .inr,
         CWhistle.dangerous? covers covers?,
         c_barNil ⟩
 
