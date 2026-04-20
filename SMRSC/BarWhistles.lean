@@ -117,7 +117,7 @@ def bar_or {α} {d d' : List α -> Prop} (h : List α)
 
 -- pathLengthWhistle
 
-instance pathLengthWhistle (α : Type) (l : Nat) : BarWhistle α :=
+def pathLengthWhistle (α : Type) (l : Nat) : BarWhistle α :=
   let dangerous (h : List α) : Prop
     := l ≤  h.length
   let dangerous? (h : List α) : Decidable (dangerous h)
@@ -183,7 +183,7 @@ def bar_to_bart {α} (d : List α -> Prop) (h : List α) : (b : Bar d h) -> BarT
 -- BarWhistleT α
 --
 
-class BarWhistleT α where
+structure BarWhistleT α where
   -- Bar whistles deal with sequences of some entities
   -- (which in our model of supercompilations are configurations).
 
@@ -216,18 +216,18 @@ def bwt_to_bw {α} (w : BarWhistleT α) : BarWhistle α
 
 namespace BarGenT
 
-variable {α : Type} [w : BarWhistleT α] (step : List α -> α)
+variable {α : Type} (w : BarWhistleT α) (step : List α -> α)
 open BarWhistleT
 
-def barGenT' (h : List α) : (t : WFT α) -> (s : SecureHBy dangerous h t)  ->
-      {h' : List α // dangerous h'}
+def barGenT' (h : List α) : (t : WFT α) -> (s : SecureHBy w.dangerous h t)  ->
+      {h' : List α // w.dangerous h'}
   | .now, dh => ⟨h, dh⟩
   | .later l, s =>
       have c : α := step h
       barGenT' (c :: h) (l c) (s c)
 
-def barGenT : {h : List α // dangerous h}
-  := barGenT' step [] barNil.val barNil.property
+def barGenT : {h : List α // w.dangerous h}
+  := barGenT' w step [] w.barNil.val w.barNil.property
 
 end BarGenT
 
@@ -237,7 +237,7 @@ end BarGenT
 
 -- inverseImageWhistleT
 
-instance inverseImageWhistleT {α β : Type} (f : α -> β)
+def inverseImageWhistleT {α β : Type} (f : α -> β)
     (w : BarWhistleT β) : BarWhistleT α
   :=
 
@@ -258,7 +258,7 @@ instance inverseImageWhistleT {α β : Type} (f : α -> β)
 
 -- inverseImageWhistle
 
-instance inverseImageWhistle {α β : Type} (f : α -> β) :
+def inverseImageWhistle {α β : Type} (f : α -> β) :
     (w : BarWhistle β) -> BarWhistle α
   :=
   ( · |> bw_to_bwt |> inverseImageWhistleT f |> bwt_to_bw)
@@ -336,11 +336,11 @@ def barNilT (wf : WellFoundedT r) : BarT (dangerous r) []
 
 end WFWhistle
 
-instance wfWhistle {α : Type} (r : α -> α -> Prop) (dr : DecidableRel r)
+def wfWhistle {α : Type} (r : α -> α -> Prop) (dr : DecidableRel r)
                     (wf : WellFoundedT r) : BarWhistle α
   := ⟨ WFWhistle.dangerous r, WFWhistle.dangerous? r, WFWhistle.barNil r wf ⟩
 
-instance wfWhistleT {α : Type} (r : α -> α -> Prop) (dr : DecidableRel r)
+def wfWhistleT {α : Type} (r : α -> α -> Prop) (dr : DecidableRel r)
                     (wf : WellFoundedT r) : BarWhistleT α
   := ⟨ WFWhistle.dangerous r, WFWhistle.dangerous? r, WFWhistle.barNilT r wf ⟩
 
@@ -388,17 +388,13 @@ end CWhistle
 
 -- CWhistle
 
-instance CWhistle {α : Type} (covers : α -> α -> Prop) (covers? : DecidableRel covers)
+def CWhistle {α : Type} (covers : α -> α -> Prop) (covers? : DecidableRel covers)
           (c_barNil : Bar (CWhistle.dangerous covers) [])
       : BarWhistle α
   := ⟨ CWhistle.dangerous covers,
         -- fun _ _ => .inr,
         CWhistle.dangerous? covers covers?,
         c_barNil ⟩
-
-class CWorld {α : Type} where
-  covers : α -> α -> Prop
-  covers? : DecidableRel covers
 
 --
 -- Almost-full relations
