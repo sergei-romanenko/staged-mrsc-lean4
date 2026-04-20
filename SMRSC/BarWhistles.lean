@@ -32,7 +32,7 @@ inductive Bar {α : Type} (d : List α -> Prop) :
   | now   {h} : (dh : d h) -> Bar d h
   | later {h} : (bs : ∀ c, Bar d (c :: h)) -> Bar d h
 
-class BarWhistle α where
+structure BarWhistle α where
   -- Bar whistles deal with sequences of some entities
   -- (which in our model of supercompilations are configurations).
 
@@ -52,18 +52,18 @@ class BarWhistle α where
 
 namespace BarGen
 
-variable {α : Type} [w : BarWhistle α] (step : List α -> α)
+variable {α : Type} (w : BarWhistle α) (step : List α -> α)
 open BarWhistle
 
-def barGen' (h : List α) : (b : Bar dangerous h) ->
-      {h' : List α // dangerous h'}
+def barGen' (h : List α) : (b : Bar w.dangerous h) ->
+      {h' : List α // w.dangerous h'}
   | .now dh => ⟨h, dh⟩
   | .later bs =>
       have c : α := step h
       barGen' (c :: h) (bs c)
 
-def barGen : {h : List α // dangerous h}
-  := barGen' step [] barNil
+def barGen : {h : List α // w.dangerous h}
+  := barGen' w step [] w.barNil
 
 end BarGen
 
@@ -80,10 +80,10 @@ inductive Fan (α : Type) : Type where
 
 namespace BarFanGen
 
-variable {α : Type} [w : BarWhistle α] (step : List α -> List α)
+variable {α : Type} (w : BarWhistle α) (step : List α -> List α)
 open BarWhistle
 
-def fanGen' (h : List α) : (b : Bar dangerous h) -> Fan α := fun
+def fanGen' (h : List α) : (b : Bar w.dangerous h) -> Fan α := fun
   | .now _ =>
       .fan []
   | .later bs =>
