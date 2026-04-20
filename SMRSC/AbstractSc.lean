@@ -20,6 +20,8 @@ University of Pereslavl, 2012, 260 p. ISBN 978-5-901795-28-6, pages
 142-164.
 -/
 
+namespace AbsSc
+
 /-
 ### Notation: ###
 
@@ -240,3 +242,5 @@ def StarMRSC_StarNDSC [ScWorld] {g g'} : StarMRSC g g' -> StarNDSC g g'
 
 def StarSC_StarNDSC [ScWorld] {g g'} : StarSC g g' -> StarNDSC g g'
   := StarMRSC_StarNDSC ∘ StarSC_StarMRSC
+
+end AbsSc

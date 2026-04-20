@@ -33,3 +33,17 @@ def cartesian2 {α} : List α -> List (List α) -> List (List α)
 def cartesian {α} : List (List α) -> List (List α)
   | [] => [ [] ]
   | xs :: xss => cartesian2 xs (cartesian xss)
+
+
+/-
+--
+-- `Pointwise r xs ys` means that `r x y` for all respective
+-- `xs.contains x` and `ys.contains y`.
+--
+
+inductive Pointwise {α β} (r : α -> β -> Type) : List α -> List β -> Prop where
+  | nil  : Pointwise r [] []
+  | cons {x y xs ys} :
+      r x y -> Pointwise r xs ys -> Pointwise r (x :: xs) (y :: ys)
+ -/
+

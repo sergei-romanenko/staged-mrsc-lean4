@@ -7,8 +7,10 @@ import SMRSC.AbstractSc
 import SMRSC.AlmostFullRel
 import SMRSC.BarWhistles
 import SMRSC.Graphs
+import SMRSC.BigStepSc
 
 -- Tests
 
 import SMRSC.Test.Cartesian
 import SMRSC.Test.Graphs
+import SMRSC.Test.BigStepSc

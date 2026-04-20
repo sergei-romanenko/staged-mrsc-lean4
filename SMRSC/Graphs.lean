@@ -40,6 +40,7 @@ import SMRSC.Util
 
 -- Graph
 
+@[aesop unsafe [constructors, cases]]
 inductive Graph (α : Type) : Type where
   | back  : (c : α) -> Graph α
   | forth : (c : α) -> (gs : List (Graph α)) -> Graph α
@@ -58,6 +59,7 @@ deriving BEq, Repr
 
 -- LazyGraph
 
+@[aesop unsafe [constructors, cases]]
 inductive LazyGraph (α : Type) : Type where
   | empty : LazyGraph α
   | stop  : (c : α) -> LazyGraph α
