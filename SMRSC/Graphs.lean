@@ -44,7 +44,7 @@ import SMRSC.Util
 inductive Graph (α : Type) : Type where
   | back  : (c : α) -> Graph α
   | forth : (c : α) -> (gs : List (Graph α)) -> Graph α
-deriving BEq, Repr
+deriving BEq, Repr, Nonempty
 
 --
 -- Lazy graphs of configuration
@@ -64,7 +64,7 @@ inductive LazyGraph (α : Type) : Type where
   | empty : LazyGraph α
   | stop  : (c : α) -> LazyGraph α
   | build : (c : α) -> (lss : List (List (LazyGraph α))) -> LazyGraph α
-deriving BEq, Repr
+deriving BEq, Repr, Nonempty
 
 -- empty?
 

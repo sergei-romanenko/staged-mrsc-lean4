@@ -8,6 +8,7 @@ import SMRSC.AlmostFullRel
 import SMRSC.BarWhistles
 import SMRSC.Graphs
 import SMRSC.BigStepSc
+import SMRSC.Cographs
 
 -- Tests
 
