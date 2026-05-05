@@ -84,12 +84,12 @@ def unroll {α} : (l : LazyGraph α) -> List (Graph α)
   | .stop c =>  [ .back c ]
   | .build c lss => List.map (.forth c) (unroll_lss lss)
 
-  def unroll_lss {α} : (lss : List (List (LazyGraph α))) -> List (List (Graph α))
-    | [] => []
-    | (ls :: lss) => cartesian (unroll_ls ls) ++ unroll_lss lss
+def unroll_lss {α} : (lss : List (List (LazyGraph α))) -> List (List (Graph α))
+  | [] => []
+  | (ls :: lss) => cartesian (unroll_ls ls) ++ unroll_lss lss
 
-  -- `unroll_ls` has only been introduced to make the termination
-  -- checker happy. Actually, it is equivalent to `map unroll`.
+-- `unroll_ls` has only been introduced to make the termination
+-- checker happy. Actually, it is equivalent to `map unroll`.
 
 def unroll_ls {α} : (ls : List (LazyGraph α)) -> List (List (Graph α))
   | [] => []

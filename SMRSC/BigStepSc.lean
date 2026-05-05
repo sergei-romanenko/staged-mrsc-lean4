@@ -33,10 +33,10 @@ import SMRSC.Graphs
 --   they may represent sets of states in any form/language and as well may
 --   contain any _additional_ information.
 --
--- * `Foldable` is a "foldability relation". c << c' means that c is foldable to c'.
+-- * `foldable` is a "foldability relation". c << c' means that c is foldable to c'.
 --   (In such cases c' is usually said to be " more general than c".)
 --
--- * `foldable?` is a decision procedure for `Foldable`. This procedure is necessary
+-- * `foldable?` is a decision procedure for `foldable`. This procedure is necessary
 --   for implementing supercompilation in functional form.
 --
 -- * `develop` is a function that gives a number of possible decompositions of
@@ -59,24 +59,24 @@ import SMRSC.Graphs
 -- * `History` is a list of configurations that have been produced
 --   in order to reach the current configuration.
 --
--- * `FoldableToHistory c h` means that `c` is foldable to a configuration in
+-- * `foldableToHistory c h` means that `c` is foldable to a configuration in
 --   the history `h`.
 --
--- * `foldableToHistory? c h` decides whether `FoldableToHistory c h c h`.
+-- * `foldableToHistory? c h` decides whether `foldableToHistory c h c h`.
 
 -- ScWorld
 
 structure ScWorld α where
-  FoldableTo : (c c' : α) -> Prop
-  foldableTo? : (c c' : α) -> Decidable (FoldableTo c c')
+  foldableTo : (c c' : α) -> Prop
+  foldableTo? : (c c' : α) -> Decidable (foldableTo c c')
   develop : (c : α) -> List (List α)
 
-def ScWorld.FoldableToHistory {α} (s : ScWorld α) (c : α) : (h : List α) -> Prop
+def ScWorld.foldableToHistory {α} (s : ScWorld α) (c : α) : (h : List α) -> Prop
   | [] => False
-  | c' :: h => s.FoldableTo c c' ∨ FoldableToHistory s c h
+  | c' :: h => s.foldableTo c c' ∨ s.foldableToHistory c h
 
 def ScWorld.foldableToHistory? {α} (s : ScWorld α) (c : α) :
-      (h : List α) -> Decidable (s.FoldableToHistory c h)
+      (h : List α) -> Decidable (s.foldableToHistory c h)
   | [] => isFalse id
   | c' :: h =>
       match s.foldableTo? c c' with
@@ -94,8 +94,8 @@ def ScWorld.foldableToHistory? {α} (s : ScWorld α) (c : α) :
 
 structure ScWorldWithLabels β α where
   -- w : BarWhistle α
-  Foldable : (c c' : α) -> Prop
-  foldable? : (c c' : α) -> Decidable (Foldable c c')
+  foldable : (c c' : α) -> Prop
+  foldable? : (c c' : α) -> Decidable (foldable c c')
   develop : (c : α) -> List (List (β × α))
 
 -- injectLabelsInScWorld
@@ -107,13 +107,13 @@ def barWhistleWithLabels {α β} (w : BarWhistle α) : BarWhistle (β × α)
 
 def injectLabelsInScWorld {β α} (wl : ScWorldWithLabels β α) : ScWorld (β × α)
   :=
-  let Foldable (c c' : β × α) : Prop :=
-        wl.Foldable c.snd c'.snd
-  let foldable? (c c' : β × α) : Decidable (wl.Foldable c.snd c'.snd) :=
+  let foldable (c c' : β × α) : Prop :=
+        wl.foldable c.snd c'.snd
+  let foldable? (c c' : β × α) : Decidable (wl.foldable c.snd c'.snd) :=
         wl.foldable? c.snd c'.snd
   let develop (c : β × α) : List (List (β × α)) :=
         wl.develop c.snd
-  ⟨Foldable, foldable?, develop⟩
+  ⟨foldable, foldable?, develop⟩
 
 --
 -- Big-step non-deterministic supercompilation
@@ -125,10 +125,10 @@ mutual
 inductive NDSC {α} [BEq α] {s : ScWorld α} :
       (h : List α) -> (c : α) -> (g : Graph α) -> Prop where
   | fold {h c} :
-      (f : s.FoldableToHistory c h) ->
+      (f : s.foldableToHistory c h) ->
         NDSC h c (.back c)
   | build {h c cs gs} :
-      (nf : ¬s.FoldableToHistory c h) ->
+      (nf : ¬s.foldableToHistory c h) ->
       (i : cs ∈ s.develop c) ->
       (pw : NDSC_PW (c :: h) cs gs) ->
         NDSC h c (.forth c gs)
@@ -155,10 +155,10 @@ mutual
 inductive MRSC {α} [BEq α] {s : ScWorld α} {w : BarWhistle α} :
     (h : List α) -> (c : α) -> (g : Graph α) -> Prop where
   | fold {h c} :
-      (f : s.FoldableToHistory c h) ->
+      (f : s.foldableToHistory c h) ->
         MRSC h c (.back c)
   | build {h c cs gs} :
-      (nf : ¬s.FoldableToHistory c h) ->
+      (nf : ¬s.foldableToHistory c h) ->
       (nw : Not (w.dangerous h)) ->
       (i : cs ∈ s.develop c) ->
       (pw : MRSC_PW (c :: h) cs gs) ->

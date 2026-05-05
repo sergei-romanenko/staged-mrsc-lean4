@@ -16,3 +16,8 @@ import SMRSC.Statistics
 import SMRSC.Test.Cartesian
 import SMRSC.Test.Graphs
 import SMRSC.Test.BigStepSc
+
+-- An instantiation of the model for counter systems
+
+-- import SMRSC.Counters
+-- import SMRSC.Protocols.Synapse
