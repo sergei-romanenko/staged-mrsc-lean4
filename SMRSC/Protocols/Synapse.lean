@@ -13,19 +13,20 @@ open NW (ω)
 open Vec (ε)
 
 def Synapse : CountersWorld where
-    k := 3
+  k := 3
 
-    start : Conf 3 := ## [ω, #0, #0]
+  start : Conf 3
+    := ## [ω, #0, #0]
 
-    rules : (c : Conf 3) -> List (Bool × Conf 3)
-      | i :: d :: v :: ε => [
-      (i >=# 1, ## [i + d - #1, #0, v + #1]),
-      (v >=# 1, ## [i + d + v - #1, #1, #0]),
-      (i >=# 1, ## [i + d + v - #1, #1, #0])]
+  rules : (c : Conf 3) -> List (Bool × Conf 3)
+    | i :: d :: v :: ε => [
+    (i >=# 1, ## [i + d - #1, #0, v + #1]),
+    (v >=# 1, ## [i + d + v - #1, #1, #0]),
+    (i >=# 1, ## [i + d + v - #1, #1, #0])]
 
-    unsafe? : (c : Conf 3) -> Bool
-      | _ :: d :: v :: ε =>
-      (d >=# 1) && (v >=# 1) || (d >=# 2)
+  unsafe? : (c : Conf 3) -> Bool
+    | _ :: d :: v :: ε =>
+    (d >=# 1) && (v >=# 1) || (d >=# 2)
 
 
 --
@@ -104,7 +105,7 @@ Synapse (5, 97)
       |
       |__[W, 0, 1]*
       |
-      |__[W, 1, 0]*\
+      |__[W, 1, 0]*
 "
 
 #guard run_min_sc "Synapse" Synapse 3 10 == expected

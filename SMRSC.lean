@@ -21,3 +21,14 @@ import SMRSC.Test.BigStepSc
 
 import SMRSC.Counters
 import SMRSC.Protocols.Synapse
+import SMRSC.Protocols.MSI
+import SMRSC.Protocols.MOSI
+-- import SMRSC.Protocols.MESI
+-- import SMRSC.Protocols.MOESI
+-- import SMRSC.Protocols.Illinois
+-- import SMRSC.Protocols.Berkley
+-- import SMRSC.Protocols.Firefly
+-- import SMRSC.Protocols.Xerox
+-- import SMRSC.Protocols.ReaderWriter
+-- import SMRSC.Protocols.DataRace
+-- import SMRSC.Protocols.Futurebus

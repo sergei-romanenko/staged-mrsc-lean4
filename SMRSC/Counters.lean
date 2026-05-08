@@ -305,14 +305,14 @@ def run_min_sc (name : String)
   let l := lazy_mrsc s w cw.start
   let sl := cl_empty_and_bad cw.unsafe? l
   let (len_usl, size_usl) := size_unroll sl
-  -- let r := r ++ "(" ++ show len_usl ++ ", " ++ show size_usl ++ ")\n"
   let r := s!"{r}({len_usl}, {size_usl})\n"
   let (_, ml) := cl_min_size sl
   let gs := unroll ml
-  r ++
+  let r := r ++
     match gs with
       | [] => ": No solution"
       | (mg :: _) => graph_pp mg
+  r ++ "\n"
 
 def run_min_sc8 (name : String)
   (cw : CountersWorld) (m d : Nat) : String
@@ -327,7 +327,8 @@ def run_min_sc8 (name : String)
   let r := s!"{r}({len_usl}, {size_usl})\n"
   let (_, ml) := cl_min_size sl
   let gs := unroll ml
-  r ++
+  let r := r ++
     match gs with
       | [] => ": No solution"
       | (mg :: _) => graph_pp mg
+  r ++ "\n"
