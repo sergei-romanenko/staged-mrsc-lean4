@@ -26,9 +26,10 @@ import SMRSC.Protocols.MOSI
 import SMRSC.Protocols.MESI
 import SMRSC.Protocols.MOESI
 import SMRSC.Protocols.Illinois
--- import SMRSC.Protocols.Berkley
--- import SMRSC.Protocols.Firefly
--- import SMRSC.Protocols.Xerox
+import SMRSC.Protocols.Berkley
+import SMRSC.Protocols.Firefly
+import SMRSC.Protocols.Xerox
 -- import SMRSC.Protocols.ReaderWriter
 -- import SMRSC.Protocols.DataRace
+-- Slow!
 -- import SMRSC.Protocols.Futurebus
