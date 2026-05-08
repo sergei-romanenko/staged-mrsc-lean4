@@ -19,5 +19,5 @@ import SMRSC.Test.BigStepSc
 
 -- An instantiation of the model for counter systems
 
--- import SMRSC.Counters
--- import SMRSC.Protocols.Synapse
+import SMRSC.Counters
+import SMRSC.Protocols.Synapse

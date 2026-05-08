@@ -47,3 +47,20 @@ inductive Pointwise {α β} (r : α -> β -> Type) : List α -> List β -> Prop 
       r x y -> Pointwise r xs ys -> Pointwise r (x :: xs) (y :: ys)
  -/
 
+namespace List
+
+def any_p {α} (p : α -> Prop) : List α -> Prop
+  | [] => False
+  | x :: xs => p x ∨ any_p p xs
+
+def any_p? {α} (p : α -> Prop) [p? : DecidablePred p] : DecidablePred (any_p p)
+  | [] => isFalse id
+  | x :: xs => match p? x with
+      | isTrue px => isTrue $ Or.inl px
+      | isFalse npx => match any_p? p xs with
+          | isTrue pxs => isTrue $ Or.inr pxs
+          | isFalse npxs => isFalse $ fun pxxs => match pxxs with
+              | .inl px => npx px
+              | .inr pxs => npxs pxs
+
+end List

@@ -59,7 +59,7 @@ def barGen' (h : List α) : (b : Bar w.dangerous h) ->
       {h' : List α // w.dangerous h'}
   | .now dh => ⟨h, dh⟩
   | .later bs =>
-      have c : α := step h
+      let c : α := step h
       barGen' (c :: h) (bs c)
 
 def barGen : {h : List α // w.dangerous h}
@@ -83,11 +83,11 @@ namespace BarFanGen
 variable {α : Type} (w : BarWhistle α) (step : List α -> List α)
 open BarWhistle
 
-def fanGen' (h : List α) : (b : Bar w.dangerous h) -> Fan α := fun
+def fanGen' (h : List α) : (b : Bar w.dangerous h) -> Fan α
   | .now _ =>
       .fan []
   | .later bs =>
-      .fan ((step h).map (fun c => (c , fanGen' (c :: h) (bs c))))
+      .fan ((step h).map (fun c => (c, fanGen' (c :: h) (bs c))))
 
 end BarFanGen
 
@@ -139,7 +139,7 @@ def pathLengthWhistle (α : Type) (l : Nat) : BarWhistle α :=
         grind only [= List.length_cons]
 
   let barNil : Bar dangerous []
-    := bar l [] (Nat.add_eq_left.mpr rfl)
+    := bar l [] (Nat.add_eq_left.mpr rfl : l + [].length = l)
 
   ⟨dangerous, dangerous?, barNil⟩
 

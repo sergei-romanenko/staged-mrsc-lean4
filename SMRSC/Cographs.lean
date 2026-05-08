@@ -62,20 +62,20 @@ def get_css {α} (g : GenG α) :
       (css : List (List α)) -> List (List (GenG α))
   | [] => []
   | cs :: css =>
-      build_graph8_cs g cs :: get_css g css
+      get_cs g cs :: get_css g css
 
-def build_graph8_cs {α} (g : GenG α) :
+def get_cs {α} (g : GenG α) :
       (cs : List α) -> List (GenG α)
   | [] => []
   | c :: cs =>
-      ⟨g.s, (g.c :: g.h), c⟩ :: build_graph8_cs g cs
+      ⟨g.s, (g.c :: g.h), c⟩ :: get_cs g cs
 
 end
 
+end GenG
+
 def build_graph8 {α} (s : ScWorld α) (c : α) : GenG α
   := ⟨s, [], c⟩
-
-end GenG
 
 instance {α} : LazyGraph8 α (GenG α) where
   get := GenG.get_g
@@ -145,7 +145,10 @@ def get_l {α G} (bad : α -> Bool) [LazyGraph8 α G] (g : G) :
 end Cl8Bad
 
 instance {α G} [LazyGraph8 α G] : LazyGraph8 α (Cl8Bad α G) where
-  get x := Cl8Bad.get_l x.bad x.g
+  get bg := Cl8Bad.get_l bg.bad bg.g
+
+def cl8_bad_conf {α G} [LazyGraph8 α G] (bad : α -> Bool) (g : G) : Cl8Bad α G
+  := ⟨bad, g⟩
 
 --
 -- A cograph can be cleaned to remove some empty alternatives.
@@ -195,6 +198,10 @@ end Cl8Empty
 
 instance {α G} [LazyGraph8 α G] : LazyGraph8 α (Cl8Empty α G) where
   get x := Cl8Empty.get_l x.g
+
+def cl8_empty {α G} [LazyGraph8 α G] (g : G) : Cl8Empty α G
+  := ⟨g⟩
+
 
 -- An optimized version of `prune_cograph`.
 -- The difference is that empty subtrees are removed

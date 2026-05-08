@@ -217,5 +217,5 @@ def lazy_mrsc' {α} (s : ScWorld α) (w : BarWhistle α)
 
 -- lazy_mrsc
 
-def lazy_mrsc (s : ScWorld α) (w : BarWhistle α) (c : α) : LazyGraph α
+def lazy_mrsc {α} (s : ScWorld α) (w : BarWhistle α) (c : α) : LazyGraph α
   := lazy_mrsc' s w [] w.barNil c
