@@ -37,6 +37,8 @@ def MOSI : CountersWorld where
     | _ :: o :: s :: m :: ε =>
       (o >=# 2) || (m >=# 2) || (s >=# 1 && m >=# 1)
 
+namespace TestMOSI
+
 def expected : String
 := "\
 MOSI (459, 53802)
@@ -96,3 +98,5 @@ MOSI (459, 53802)
 #guard run_min_sc "MOSI" MOSI 3 10 == expected
 
 #guard run_min_sc8 "MOSI" MOSI 3 10 == expected
+
+end TestMOSI

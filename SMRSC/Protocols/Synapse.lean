@@ -33,6 +33,8 @@ def Synapse : CountersWorld where
 -- Tests
 --
 
+namespace TestSynapse
+
 def bw : BarWhistle (Conf 3)
   := cntWhistle 3 3 10
 
@@ -111,3 +113,5 @@ Synapse (5, 97)
 #guard run_min_sc "Synapse" Synapse 3 10 == expected
 
 #guard run_min_sc8 "Synapse" Synapse 3 10 == expected
+
+end TestSynapse

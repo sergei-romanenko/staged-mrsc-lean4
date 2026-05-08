@@ -28,6 +28,8 @@ def MSI : CountersWorld where
     | _ :: m :: s :: ε =>
       (m >=# 1 && s >=# 1) || (m >=# 2)
 
+namespace TestMSI
+
 def expected : String
 := "\
 MSI (3, 58)
@@ -53,3 +55,5 @@ MSI (3, 58)
 #guard run_min_sc "MSI" MSI 3 10 == expected
 
 #guard run_min_sc8 "MSI" MSI 3 10 == expected
+
+end TestMSI
