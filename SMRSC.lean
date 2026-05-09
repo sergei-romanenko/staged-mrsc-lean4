@@ -29,7 +29,7 @@ import SMRSC.Protocols.Illinois
 import SMRSC.Protocols.Berkley
 import SMRSC.Protocols.Firefly
 import SMRSC.Protocols.Xerox
--- import SMRSC.Protocols.ReaderWriter
--- import SMRSC.Protocols.DataRace
+import SMRSC.Protocols.ReaderWriter
+import SMRSC.Protocols.DataRace
 -- Slow!
--- import SMRSC.Protocols.Futurebus
+import SMRSC.Protocols.Futurebus
