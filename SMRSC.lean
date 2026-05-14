@@ -7,9 +7,13 @@ import SMRSC.AbstractSc
 import SMRSC.AlmostFullRel
 import SMRSC.BarWhistles
 import SMRSC.Graphs
+import SMRSC.GraphsTheorems
 import SMRSC.BigStepSc
+--import SMRSC.BigStepScTheorems
 import SMRSC.Cographs
+--import SMRSC.CographsTheorems
 import SMRSC.Statistics
+-- import SMRSC.StatisticsTheorems
 
 -- Tests
 

@@ -68,7 +68,7 @@ deriving BEq, Repr, Nonempty
 
 -- empty?
 
-def empty? {c} : (l : LazyGraph c) -> Decidable (.empty = l)
+def empty? {α} : (l : LazyGraph α) -> Decidable (l = .empty)
   | .empty => isTrue rfl
   | .stop _ => isFalse (nomatch ·)
   | .build _ _ => isFalse (nomatch ·)
@@ -191,11 +191,17 @@ def cl_empty_ls {α} : (ls : List (LazyGraph α)) -> Option (List (LazyGraph α)
   | [] => .some []
   | l :: ls =>
       let l' := cl_empty l
-      match empty? l' with
-      | isTrue _ => .none
-      | isFalse _ => match cl_empty_ls ls with
-          | .none => .none
-          | .some ls' => .some (l' :: ls')
+      match l' with
+      | .empty => .none
+      | .stop _ => cl_empty_ls' l' ls
+      | .build _ _ =>  cl_empty_ls' l' ls
+
+def cl_empty_ls' {α} (l' : LazyGraph α) (ls : List (LazyGraph α))
+    : Option (List (LazyGraph α))
+:=
+  match cl_empty_ls ls with
+  | .none => .none
+  | .some ls' => .some (l' :: ls')
 
 end
 

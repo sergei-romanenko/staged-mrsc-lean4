@@ -21,6 +21,16 @@ instance impTrans : Trans «⇒» «⇒» «⇒» where
 infixr:20 " ⇒ " => «⇒»
 
 --
+-- Agda-style "inspection"
+--
+
+def app_eq {α β} (f : α -> β) (x : α) : {y // f x = y}
+:=
+  let y := f x
+  have h : f x = y := rfl
+  ⟨y, h⟩
+
+--
 -- Cartesian product
 --
 
@@ -34,6 +44,18 @@ def cartesian {α} : List (List α) -> List (List α)
   | [] => [ [] ]
   | xs :: xss => cartesian2 xs (cartesian xss)
 
+--
+-- Some "technical" theorems about cartesian products
+--
+
+-- cartesian2_nil
+
+theorem rw_cartesian2_nil {α} : (xs : List α) ->
+  cartesian2 xs [] = []
+  | [] => rfl
+  | x :: xs => by
+      rw [cartesian2, List.map_nil, List.nil_append]
+      exact rw_cartesian2_nil xs
 
 /-
 --
